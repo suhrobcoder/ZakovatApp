@@ -1,4 +1,4 @@
-package uz.suhrob.zakovat
+package uz.suhrob.zakovat.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
