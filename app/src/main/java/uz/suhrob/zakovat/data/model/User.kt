@@ -1,6 +1,6 @@
 package uz.suhrob.zakovat.data.model
 
-data class Admin(
+data class User(
     val login: String = "",
     val password: String = "",
 )
