@@ -2,8 +2,12 @@ package uz.suhrob.zakovat.data.pref
 
 import android.content.Context
 import androidx.core.content.edit
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class AppPrefs(private val context: Context) {
+class AppPrefs @Inject constructor(
+    @ApplicationContext private val context: Context,
+) {
     private val prefs = context.getSharedPreferences("app-prefs", Context.MODE_PRIVATE)
 
     companion object {
