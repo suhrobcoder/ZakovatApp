@@ -9,7 +9,7 @@ interface FirestoreDataSource {
     fun getTeamPlayers(team: String): Flow<List<Player>>
     fun addNewPlayer(player: Player)
     fun getResultsByTeam(team: String): Flow<List<GameResult>>
-    fun getTeamsFlow(): Flow<List<String>>
+    fun getTeamsFlow(): Flow<List<User>>
     fun getUpcomingGamesFlow(): Flow<List<Game>>
     fun getGamesFlow(): Flow<List<Game>>
     fun addUpcomingGame(game: Game)
