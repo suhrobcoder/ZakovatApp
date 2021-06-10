@@ -59,6 +59,8 @@ dependencies {
     implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")
     implementation("androidx.compose.ui:ui-tooling:${rootProject.extra["compose_version"]}")
 
+    implementation("androidx.navigation:navigation-compose:2.4.0-alpha01")
+
     implementation("com.google.accompanist:accompanist-coil:${rootProject.extra["accompanist_version"]}")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
@@ -68,6 +70,13 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1")
+
+    implementation("io.github.vanpra.compose-material-dialogs:core:0.4.1")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.3.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")

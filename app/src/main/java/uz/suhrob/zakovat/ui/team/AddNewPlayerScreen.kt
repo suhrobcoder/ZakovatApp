@@ -6,17 +6,27 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.accompanist.coil.rememberCoilPainter
+import kotlinx.coroutines.launch
+import uz.suhrob.zakovat.data.model.Player
+import uz.suhrob.zakovat.data.pref.AppPrefs
 
 @Composable
-fun AddNewPlayerScreen() {
+fun AddNewPlayerScreen(navController: NavController, viewModel: TeamViewModel, pref: AppPrefs, toast: (String) -> Unit) {
+    var name by remember {
+        mutableStateOf("")
+    }
+    var phone by remember {
+        mutableStateOf("")
+    }
+    val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -58,17 +68,24 @@ fun AddNewPlayerScreen() {
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(value = "", onValueChange = {}, placeholder = { Text(text = "Ismi") })
+            OutlinedTextField(value = name, onValueChange = {name = it}, placeholder = { Text(text = "Ismi") })
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(value = phone, onValueChange = {phone = it}, placeholder = { Text(text = "Telefon Raqam") })
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+                val player = Player(pref.getGroupName() ?: "", name, "", phone)
+                scope.launch {
+                    try {
+                        viewModel.addNewPlayer(player)
+                        navController.popBackStack()
+                    } catch (e: Exception) {
+                        toast("Xatolik")
+                    }
+                }
+                navController.popBackStack()
+            }) {
                 Text(text = "Qo'shish")
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewAddNewPlayer() {
-    AddNewPlayerScreen()
 }

@@ -13,26 +13,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import uz.suhrob.zakovat.data.model.Game
+import androidx.navigation.NavController
 import uz.suhrob.zakovat.utils.dateToString
 
 @Composable
-fun AdminHomeScreen() {
+fun AdminHomeScreen(navController: NavController, viewModel: AdminViewModel) {
+    val teams = viewModel.teams.collectAsState()
+    val upComingGames = viewModel.upcomingGames.collectAsState()
+    val runningGames = viewModel.runningGames.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Zakovat") },
-                actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Filled.Settings, contentDescription = null)
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                    }
-                },
                 backgroundColor = MaterialTheme.colors.primary,
             )
         },
@@ -42,22 +38,33 @@ fun AdminHomeScreen() {
                 icon = {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = null)
                 },
-                onClick = {}
+                onClick = { navController.navigate("new_game") }
             )
         }
     ) {
-        val games = List(10) { index -> Game("Game $index", 1232131) }
         LazyColumn(modifier = Modifier.padding(all = 16.dp)) {
+            if (runningGames.value.isNotEmpty()) {
+                item {
+                    Text(text = "Davom etayotgan o'yinlar", style = MaterialTheme.typography.h5)
+                }
+                items(items = runningGames.value) { item ->
+                    GameItem(title = item.title, time = item.time.dateToString()) {
+                        navController.navigate("game/${item.title}")
+                    }
+                }
+            }
             item {
                 Text(text = "Kelayotgan o'yinlar", style = MaterialTheme.typography.h5)
             }
-            if (games.isEmpty()) {
+            if (upComingGames.value.isEmpty()) {
                 item {
                     Text(text = "O'yinlar mavjud emas", style = MaterialTheme.typography.h5)
                 }
             } else {
-                items(items = games) { item ->
-                    GameItem(title = item.title, time = item.time.dateToString()) {}
+                items(items = upComingGames.value) { item ->
+                    GameItem(title = item.title, time = item.time.dateToString()) {
+                        navController.navigate("game_start/${item.title}")
+                    }
                 }
             }
             item {
@@ -67,8 +74,8 @@ fun AdminHomeScreen() {
                     style = MaterialTheme.typography.h5
                 )
             }
-            items(count = 10) { i ->
-                TeamItem(title = "Team #$i") {}
+            items(items = teams.value) { team ->
+                TeamItem(title = team.login) {}
             }
         }
     }

@@ -8,15 +8,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import uz.suhrob.zakovat.data.pref.AppPrefs
 
 @Composable
-fun StarterScreen() {
+fun StarterScreen(navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            navController.popBackStack()
+            navController.navigate("admin_login")
+        }) {
             Text(
                 text = "Admin bo'lib kirish",
                 style = MaterialTheme.typography.h6,
@@ -24,7 +29,10 @@ fun StarterScreen() {
             )
         }
         Spacer(modifier = Modifier.height(48.dp))
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            navController.popBackStack()
+            navController.navigate("team_login")
+        }) {
             Text(
                 text = "Guruh bo'lib kirish",
                 style = MaterialTheme.typography.h6,

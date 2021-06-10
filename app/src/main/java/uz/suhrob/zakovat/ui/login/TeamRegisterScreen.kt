@@ -8,7 +8,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,10 +18,23 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import uz.suhrob.zakovat.R
+import uz.suhrob.zakovat.data.pref.AppPrefs
 
 @Composable
-fun TeamRegisterScreen() {
+fun TeamRegisterScreen(navController: NavController, pref: AppPrefs, viewModel: AuthViewModel, toast: (String) -> Unit) {
+    var login by remember {
+        mutableStateOf("")
+    }
+    var password by remember {
+        mutableStateOf("")
+    }
+    var password1 by remember {
+        mutableStateOf("")
+    }
+    val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,31 +49,47 @@ fun TeamRegisterScreen() {
         )
         Spacer(modifier = Modifier.height(32.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = login,
+            onValueChange = { login = it },
             placeholder = { Text(text = "Guruh nomi") },
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = password,
+            onValueChange = { password = it },
             placeholder = { Text(text = "Parol") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = password1,
+            onValueChange = { password1 = it },
             placeholder = { Text(text = "Parolni takrorlang") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            if (password != password1) {
+                toast("Parollar bir xil emas")
+                return@Button
+            }
+            scope.launch {
+                try {
+                    viewModel.register(login, password)
+                    pref.setGroupName(login)
+                    pref.setUserType("team")
+                    navController.popBackStack()
+                    navController.navigate("team_home")
+                } catch (e: Exception) {
+                    toast("Xatolik")
+                }
+            }
+        }) {
             Text(
-                text = "Kirish",
+                text = "Ro'yhatdan o'tish",
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -76,7 +105,10 @@ fun TeamRegisterScreen() {
                 text = "Kirish",
                 style = TextStyle(color = Color.Blue, textDecoration = TextDecoration.Underline),
                 modifier = Modifier.clickable(
-                    onClick = { TODO() },
+                    onClick = {
+                        navController.popBackStack()
+                        navController.navigate("team_register")
+                    },
                     interactionSource = MutableInteractionSource(),
                     indication = null,
                 )

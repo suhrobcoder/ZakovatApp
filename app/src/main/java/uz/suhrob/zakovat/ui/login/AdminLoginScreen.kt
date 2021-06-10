@@ -6,17 +6,27 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import uz.suhrob.zakovat.R
+import uz.suhrob.zakovat.data.pref.AppPrefs
 
 @Composable
-fun AdminLoginScreen() {
+fun AdminLoginScreen(navController: NavController, pref: AppPrefs, viewModel: AuthViewModel, toast: (String) -> Unit) {
+    var login by remember {
+        mutableStateOf("")
+    }
+    var password by remember {
+        mutableStateOf("")
+    }
+    val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -31,21 +41,32 @@ fun AdminLoginScreen() {
         )
         Spacer(modifier = Modifier.height(32.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = login,
+            onValueChange = { login = it },
             placeholder = { Text(text = "Login") },
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = password,
+            onValueChange = { password = it },
             placeholder = { Text(text = "Parol") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            scope.launch {
+                val result = viewModel.auth(login, password)
+                if (result) {
+                    pref.setUserType("admin")
+                    navController.popBackStack()
+                    navController.navigate("admin_home")
+                } else {
+                    toast("Login yoki parol noto'g'ri")
+                }
+            }
+        }) {
             Text(
                 text = "Kirish",
                 style = MaterialTheme.typography.h6,

@@ -5,5 +5,5 @@ data class Answer(
     val game: String = "",
     val team: String = "",
     val answer: String = "",
-    val isRight: Int = 0,
+    val right: Int = 0,
 )
